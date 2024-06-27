@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data @AllArgsConstructor @NoArgsConstructor
-public class TemporaryAuthenticationCode {
+public class AuthenticationCode {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

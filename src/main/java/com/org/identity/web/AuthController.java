@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     @Autowired
@@ -16,7 +16,7 @@ public class AuthController {
 
     @PostMapping("/send-code")
     public ResponseEntity<Void> sendAuthCode(@RequestBody UserAuthRequestDTO userAuthRequestDTO) {
-        authService.sendAuthenticationCode(userAuthRequestDTO);
+        authService.sendAuthenticationCode(userAuthRequestDTO.getEmailOrPhone());
         return ResponseEntity.ok().build();
     }
 

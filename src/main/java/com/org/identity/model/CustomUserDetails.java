@@ -15,9 +15,11 @@ import java.util.stream.Collectors;
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
+    private final String username;
 
-    public CustomUserDetails(User user) {
+    public CustomUserDetails(User user, String username) {
         this.user = user;
+        this.username = username;
     }
 //71140812
     @Override
@@ -34,8 +36,17 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return this.username;
     }
+
+    public String getEmail() {
+        return user.getEmail();
+    }
+
+    public String getPhoneNumber() {
+        return user.getPhoneNumber();
+    }
+
 
     @Override
     public boolean isAccountNonExpired() {
