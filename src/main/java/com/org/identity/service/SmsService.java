@@ -19,4 +19,8 @@ public class SmsService implements CodeSenderService{
         String message = messageSource.getMessage("authentication.code.sms.body", new Object[]{code}, LocaleContextHolder.getLocale());
         sendSms(phone, message);
     }
+
+    public boolean verifyCode(String phoneNumber, String code) {
+        return false;
+    }
 }

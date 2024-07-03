@@ -1,7 +1,10 @@
 package com.org.identity.config;
 
+//import com.org.identity.security.JwtAuthenticationFilter;
 import com.org.identity.security.JwtAuthenticationFilter;
 import com.org.identity.service.CustomUserDetailsService;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,42 +26,43 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 //98162065
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
-	private final CustomUserDetailsService customUserDetailsService;
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private  CustomUserDetailsService customUserDetailsService;
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-	public SecurityConfig(
-			CustomUserDetailsService customUserDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
-		this.customUserDetailsService = customUserDetailsService;
-		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-	}
+
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http
-				.csrf(AbstractHttpConfigurer::disable)
+				.csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection if not needed
 				.authorizeHttpRequests(auth -> {
-					auth.requestMatchers("/api/v1/auth/**").permitAll();
-					auth.anyRequest().authenticated();
+					auth.requestMatchers("/auth/authenticate","/auth/send-code", "/auth/test").permitAll()
+							.anyRequest().authenticated(); // Secure all other endpoints
 				})
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				// .formLogin(Customizer.withDefaults())
 				// .oauth2Login(Customizer.withDefaults())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authenticationProvider(authenticationProvider())
+				//.authenticationProvider(authenticationProvider())
 				.build();
 	}
+
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
+	/*
 	@Bean
 	public UserDetailsService userDetailsService() {
 		return new CustomUserDetailsService(); 
 	}
+*/
 
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
@@ -73,5 +77,4 @@ public class SecurityConfig {
 		authProvider.setPasswordEncoder(passwordEncoder());
 		return authProvider;
 	}
-
 }

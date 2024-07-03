@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Data @AllArgsConstructor @NoArgsConstructor
+@Setter @Getter @AllArgsConstructor @NoArgsConstructor
 public class AuthenticationCode {
 
     @Id

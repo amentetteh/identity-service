@@ -20,15 +20,17 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private MessageSource messageSource;
 
-    @Override
-    public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(identifier)
-                .orElse(null);
 
-        if (user == null) {
-            user = userRepository.findByPhoneNumber(identifier)
-                    .orElseThrow(() -> new UsernameNotFoundException(messageSource.getMessage("user.not.found", new Object[]{identifier}, LocaleContextHolder.getLocale())));
-        }
-        return new CustomUserDetails(user,identifier);
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(messageSource.getMessage("user.not.found", new Object[]{username}, LocaleContextHolder.getLocale())));
+        return new CustomUserDetails(user);
+    }
+
+    public UserDetails loadUserByPhoneNumber(String phoneNumber) throws UsernameNotFoundException {
+        User user = userRepository.findByPhoneNumber(phoneNumber)
+                .orElseThrow(() -> new UsernameNotFoundException(messageSource.getMessage("user.not.found", new Object[]{phoneNumber}, LocaleContextHolder.getLocale())));
+        return new CustomUserDetails(user);
     }
 }

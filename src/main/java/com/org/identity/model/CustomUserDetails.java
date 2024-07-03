@@ -9,25 +9,37 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
-    private final String username;
 
-    public CustomUserDetails(User user, String username) {
+    public CustomUserDetails(User user) {
         this.user = user;
-        this.username = username;
     }
 //71140812
     @Override
     public Set<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toSet());
+        Set<GrantedAuthority> authorities = new HashSet<>();
+
+        // Add roles as authorities
+        authorities.addAll(user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+                .collect(Collectors.toSet()));
+
+        // Add permissions as authorities
+        authorities.addAll(user.getRoles().stream()
+                .flatMap(role -> role.getPermissions().stream())
+                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
+                .collect(Collectors.toSet()));
+
+        return authorities;
     }
+
+
 
     @Override
     public String getPassword() {
@@ -36,12 +48,9 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.username;
+        return user.getUsername();
     }
 
-    public String getEmail() {
-        return user.getEmail();
-    }
 
     public String getPhoneNumber() {
         return user.getPhoneNumber();

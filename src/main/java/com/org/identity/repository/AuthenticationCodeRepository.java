@@ -13,7 +13,7 @@ public interface AuthenticationCodeRepository extends JpaRepository<Authenticati
     Optional<AuthenticationCode> findByUser(User user);
     void deleteByUser(User user);
 
-    @Query("SELECT tc FROM TemporaryCode tc WHERE tc.user = :user AND tc.expirationTime > :currentTime")
-    List<AuthenticationCode> findUnexpiredCodesByUser(User user, LocalDateTime currentTime);
+    //@Query("SELECT tc FROM AuthenticationCode tc WHERE tc.user = :user AND tc.expirationTime > :currentTime")
+    Optional<AuthenticationCode> findTopByUserAndExpirationTimeAfterOrderByExpirationTimeDesc(User user, LocalDateTime currentTime);
 }
 
